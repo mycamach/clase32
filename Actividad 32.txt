@@ -1,0 +1,112 @@
+﻿ACTIVIDAD 32 – Postgresql avanzado
+
+manoli=# CREATE DATABASE pintagram;
+
+manoli=# \c pintagram
+
+pintagram=# CREATE TABLE users (id integer PRIMARY KEY, user_name varchar(50));
+
+pintagram=# CREATE TABLE images (id integer PRIMARY KEY, user_id integer REFERENCES users(id));
+
+pintagram=# /d users
+
+pintagram=# CREATE TABLE likes (id integer PRIMARY KEY, user_id integer REFERENCES users(id), images_id integer REFERENCES images(id));
+
+pintagram=# CREATE TABLE tags (id integer PRIMARY KEY, name varchar(50));
+
+pintagram=# CREATE TABLE image_tags (id integer PRIMARY KEY, image_id integer REFERENCES images(id), tag_id integer REFERENCES tags(id));
+
+pintagram=# ALTER TABLE likes ADD UNIQUE(user_id, images_id);
+
+pintagram=# ALTER TABLE image_tags ADD UNIQUE(image_id, tag_id);
+
+pintagram=# \d image_tags
+
+pintagram=# INSERT INTO users (id, user_name) values (1, 'mycamach');
+
+pintagram=# ALTER TABLE likes RENAME COLUMN images_id TO image_id;
+
+pintagram=# INSERT INTO images (id, user_id) values (1, 2);
+
+pintagram=# INSERT INTO images (id, user_id) values (2, 1);
+
+pintagram=# INSERT INTO users (id, user_name) values (3, 'gato');
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (1, 1, 2);
+
+pintagram=# ALTER TABLE images ADD COLUMN description varchar(50);
+
+pintagram=# UPDATE images SET description = 'Primera foto Sofi' WHERE id = 2;
+
+pintagram=# UPDATE images SET description = 'Primera foto Manoli' WHERE id = 1;
+
+pintagram=# INSERT INTO images (id, user_id, description) values (3, 1, 'Segunda foto Manoli');
+
+pintagram=# INSERT INTO images (id, user_id, description) values (4, 2, 'Segunda foto Sofi');
+
+pintagram=# INSERT INTO images (id, user_id, description) values (5, 3, 'Miau'); 
+
+pintagram=# INSERT INTO images (id, user_id, description) values (6, 3, 'Miau2');
+
+pintagram=# SELECT * FROM images ORDER BY ID;
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (2, 2, 2);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (3, 3, 2);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (4, 1, 1);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (5, 2, 1);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (6, 3, 1);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (7, 1, 3);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (8, 2, 3);
+
+pintagram=# INSERT INTO likes (id, user_id, image_id) values (9, 3, 3);
+
+pintagram=# INSERT INTO tags (id, name) values (1, 'playa');
+
+pintagram=# INSERT INTO tags (id, name) values (2, 'vacaciones');
+
+pintagram=# INSERT INTO tags (id, name) values (3, 'estupido_trabajo');
+
+pintagram=# INSERT INTO tags (id, name) values (4, 'mascotas');
+
+pintagram=# INSERT INTO tags (id, name) values (5, 'mamas');
+
+pintagram=# INSERT INTO tags (id, name) values (6, 'tejer');
+
+pintagram=# INSERT INTO tags (id, name) values (7, 'jugar');
+
+pintagram=# INSERT INTO tags (id, name) values (8, 'carrete');
+
+pintagram=# SELECT * FROM tags;
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (1, 2, 8);
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (2, 2, 2 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (3, 2, 5 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (4, 1, 4 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (5, 1, 1 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (6, 1, 7 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (7, 3, 2 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (8, 3, 6 );
+
+pintagram=# INSERT INTO image_tags (id, image_id, tag_id) values (9, 3, 1 );
+
+pintagram=# SELECT * FROM image_tags;
+
+pintagram=# SELECT description, count(likes) FROM images FULL JOIN likes ON (images.id = likes.user_id) GROUP BY description;
+
+pintagram=# SELECT users.user_name, images.description FROM users FULL JOIN images ON (users.id = images.user_id) GROUP BY user_name, description;
+
+pintagram=# SELECT name, count(images) FROM tags FULL JOIN images ON (tags.id = images.user_id) GROUP BY name;
+
